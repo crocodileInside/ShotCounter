@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShotCounter – Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #333, #111);
+            color: #fefefe;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        header a {
+            color: #ffd166;
+            text-decoration: none;
+            font-size: .9rem;
+        }
+        main {
+            padding: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto 4rem auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0,0,0,0.4);
+            border-radius: .75rem;
+            overflow: hidden;
+        }
+        thead {
+            background: rgba(255,255,255,0.05);
+        }
+        th, td {
+            padding: .6rem .75rem;
+            text-align: left;
+            font-size: .9rem;
+        }
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.03);
+        }
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .75rem;
+            letter-spacing: .06em;
+            opacity: .8;
+        }
+        .score {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .25rem;
+        }
+        button {
+            border: none;
+            border-radius: .5rem;
+            padding: .35rem .6rem;
+            cursor: pointer;
+            font-size: .8rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            color: #fefefe;
+            backdrop-filter: blur(6px);
+            transition: transform .08s ease, box-shadow .08s ease, background .12s ease;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.12);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        .btn-plus {
+            color: #06d6a0;
+        }
+        .btn-minus {
+            color: #ef476f;
+        }
+        .btn-delete {
+            color: #ff6b6b;
+        }
+        .new-team {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            align-items: center;
+        }
+        .new-team input {
+            flex: 1 1 200px;
+            padding: .5rem .75rem;
+            border-radius: .5rem;
+            border: none;
+            font-size: .9rem;
+        }
+        .new-team button {
+            padding-inline: 1rem;
+            background: linear-gradient(135deg, #ef476f, #ffd166);
+            color: #111;
+        }
+        .status {
+            margin-top: .75rem;
+            font-size: .8rem;
+            min-height: 1.2em;
+        }
+        .status.error {
+            color: #ff6b6b;
+        }
+        .status.ok {
+            color: #06d6a0;
+        }
+        @media (max-width: 600px) {
+            th:nth-child(3), td:nth-child(3) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>ShotCounter Admin</h1>
+    <a href="/index" target="_blank">Open Presentation ↗︎</a>
+</header>
+<main>
+    <table id="team-table">
+        <thead>
+        <tr>
+            <th>Team</th>
+            <th>Score</th>
+            <th>Controls</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody id="team-body">
+        <!-- Filled by JS -->
+        </tbody>
+    </table>
+
+    <section class="new-team">
+        <input id="new-team-name" type="text" placeholder="New team name…">
+        <button onclick="addTeam()">Add Team</button>
+    </section>
+    <div id="status" class="status"></div>
+</main>
+
+<script>
+    const STATUS = document.getElementById("status");
+    const tbody = document.getElementById("team-body");
+
+    async function fetchTeams() {
+        try {
+            const res = await fetch("/api/teams");
+            const data = await res.json();
+            renderTeams(data);
+        } catch (err) {
+            console.error(err);
+            showStatus("Failed to load teams", true);
+        }
+    }
+
+    function renderTeams(teams) {
+        tbody.innerHTML = "";
+        for (const t of teams) {
+            const tr = document.createElement("tr");
+
+            const nameTd = document.createElement("td");
+            nameTd.textContent = t.name;
+            tr.appendChild(nameTd);
+
+            const scoreTd = document.createElement("td");
+            scoreTd.className = "score";
+            scoreTd.textContent = t.score;
+            tr.appendChild(scoreTd);
+
+            const controlsTd = document.createElement("td");
+            controlsTd.className = "btn-group";
+            const deltas = [1, 5, 10, -1];
+            for (const d of deltas) {
+                const btn = document.createElement("button");
+                btn.textContent = d > 0 ? "+" + d : d;
+                btn.classList.add(d > 0 ? "btn-plus" : "btn-minus");
+                btn.onclick = () => changeScore(t.id, d);
+                controlsTd.appendChild(btn);
+            }
+            tr.appendChild(controlsTd);
+
+            const deleteTd = document.createElement("td");
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "✕";
+            delBtn.classList.add("btn-delete");
+            delBtn.title = "Hide team";
+            delBtn.onclick = () => hideTeam(t.id);
+            deleteTd.appendChild(delBtn);
+            tr.appendChild(deleteTd);
+
+            tbody.appendChild(tr);
+        }
+    }
+
+    async function changeScore(id, delta) {
+        try {
+            const res = await fetch("/api/score", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({id, delta})
+            });
+            const data = await res.json();
+            if (data.status !== "ok") {
+                showStatus(data.message || "Failed to update score", true);
+            } else {
+                showStatus("Score updated", false);
+                fetchTeams();
+            }
+        } catch (err) {
+            console.error(err);
+            showStatus("Error updating score", true);
+        }
+    }
+
+    async function addTeam() {
+        const input = document.getElementById("new-team-name");
+        const name = input.value.trim();
+        if (!name) {
+            showStatus("Team name cannot be empty", true);
+            return;
+        }
+        try {
+            const res = await fetch("/api/team", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({name})
+            });
+            const data = await res.json();
+            if (data.status !== "ok") {
+                showStatus(data.message || "Failed to add team", true);
+            } else {
+                showStatus("Team added", false);
+                input.value = "";
+                fetchTeams();
+            }
+        } catch (err) {
+            console.error(err);
+            showStatus("Error adding team", true);
+        }
+    }
+
+    async function hideTeam(id) {
+        if (!confirm("Hide this team?")) return;
+        try {
+            const res = await fetch(`/api/team/${id}/hide`, {
+                method: "POST"
+            });
+            const data = await res.json();
+            if (data.status !== "ok") {
+                showStatus(data.message || "Failed to hide team", true);
+            } else {
+                showStatus("Team hidden", false);
+                fetchTeams();
+            }
+        } catch (err) {
+            console.error(err);
+            showStatus("Error hiding team", true);
+        }
+    }
+
+    function showStatus(msg, isError) {
+        STATUS.textContent = msg || "";
+        STATUS.className = "status " + (isError ? "error" : "ok");
+    }
+
+    // Initial load + periodic refresh so admins see each other's updates
+    fetchTeams();
+    setInterval(fetchTeams, 5000);
+</script>
+</body>
+</html>
