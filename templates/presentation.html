@@ -146,8 +146,8 @@
 </head>
 <body>
 <header>
-    <div class="subtitle">Live Team Drink Scoreboard</div>
-    <h1>ShotCounter</h1>
+    <!--<div class="subtitle">Live Team Drink Scoreboard</div>
+    <h1>ShotCounter</h1>-->
     <div class="subtitle" id="last-update"></div>
 </header>
 
@@ -156,7 +156,7 @@
 </div>
 
 <div class="footer">
-    Auto-refreshing. Open <strong>/admin</strong> to edit scores.
+   
 </div>
 
 <script>
@@ -236,7 +236,7 @@
         const hh = String(now.getHours()).padStart(2, "0");
         const mm = String(now.getMinutes()).padStart(2, "0");
         const ss = String(now.getSeconds()).padStart(2, "0");
-        lastUpdateLabel.textContent = `Last update: ${hh}:${mm}:${ss}`;
+        lastUpdateLabel.textContent = `Update: ${hh}:${mm}:${ss}`;
     }
 
     fetchTeams();
