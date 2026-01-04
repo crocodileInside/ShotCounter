@@ -1,158 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>ShotCounter – Scoreboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        :root {
-            --bg: #050816;
-            --accent1: rgb(255,0,255);  /* magenta */
-            --accent2: rgb(0,255,255);  /* cyan */
-            --text: #f5f5f5;
-        }
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, #1a1a2e 0, #000 55%);
-            color: var(--text);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        header {
-            text-align: center;
-        }
-        h1 {
-            margin: .25rem 0;
-            font-weight: 700;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            font-size: clamp(1.1rem, 1.8vw, 1.8rem);
-        }
-        .subtitle {
-            font-size: .8rem;
-            opacity: .7;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: .75rem;
-        }
-        .team-row {
-            display: grid;
-            grid-template-columns: minmax(90px, 15%) 1fr minmax(80px, 12%);
-            gap: .75rem;
-            align-items: center;
-            padding: .5rem .8rem;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.45);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        .team-row::before {
-            content: "";
-            position: absolute;
-            inset: -80%;
-            background: conic-gradient(from var(--a,0deg), rgba(255,255,255,0.06), transparent, transparent);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .3s ease;
-        }
-        .team-row.changed::before {
-            animation: spin 1.4s linear;
-            opacity: 1;
-        }
-        .team-name {
-            font-weight: 600;
-            font-size: clamp(.9rem, 1.1vw, 1rem);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-        }
-        .bar-outer {
-            position: relative;
-            height: 1.4rem;
-            border-radius: 999px;
-            overflow: hidden;
-            background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(0,0,0,0.7));
-        }
-        .bar-inner {
-            position: absolute;
-            inset: 0;
-            width: 0%;
-            border-radius: inherit;
-            background-image: linear-gradient(
-                90deg,
-                rgb(255,0,255),
-                rgb(191,64,255),
-                rgb(128,128,255),
-                rgb(64,191,255),
-                rgb(0,255,255)
-            );
-            box-shadow: 0 0 22px rgba(255,0,255,0.7);
-            transition: width .8s cubic-bezier(.23,1,.32,1);
-        }
-        .bar-inner.changed {
-            animation: pulse 0.7s ease-out;
-        }
-        .score {
-            text-align: right;
-            font-weight: 800;
-            font-size: clamp(1.3rem, 2vw, 2rem); /* BIGGER number */
-            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
-            white-space: nowrap;
-        }
-        .score span {
-            opacity: .7;
-            font-weight: 500;
-            margin-left: .25rem;
-            font-size: .55em; /* smaller unit label */
-            text-transform: uppercase;
-            letter-spacing: .08em;
-        }
-        .footer {
-            text-align: center;
-            font-size: .75rem;
-            opacity: .6;
-        }
-        @keyframes pulse {
-            0% { transform: scaleX(1); box-shadow: 0 0 22px rgba(255,0,255,0.7); }
-            50% { transform: scaleX(1.03); box-shadow: 0 0 35px rgba(0,255,255,1); }
-            100% { transform: scaleX(1); box-shadow: 0 0 22px rgba(255,0,255,0.7); }
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @media (max-width: 600px) {
-            body {
-                padding: .7rem;
-            }
-            .team-row {
-                grid-template-columns: minmax(60px, 25%) 1fr minmax(70px, 18%);
-            }
-        }
-    </style>
+	<meta charset="UTF-8">
+	<title>ShotCounter – Scoreboard</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		:root {
+			--bg: #050816;
+			--accent1: rgb(255,0,255);  /* magenta */
+			--accent2: rgb(0,255,255);  /* cyan */
+			--text: #f5f5f5;
+		}
+		* {
+			box-sizing: border-box;
+		}
+		
+		html { 
+			height:100%;
+		}
+		
+		body {
+			margin: 0;
+			height: 100vh;
+			min-height: 100vh;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			background: radial-gradient(circle at top, #1a1a2e 0, #000 55%);
+			color: var(--text);
+			padding: 1rem;
+			display: flex;
+			flex-direction: column;
+			overflow-x: hidden;
+			gap: 1rem;
+		}
+		header {
+			text-align: center;
+			flex: 0 0 auto;
+		}
+		h1 {
+			margin: .25rem 0;
+			font-weight: 700;
+			letter-spacing: .15em;
+			text-transform: uppercase;
+			font-size: clamp(1.1rem, 1.8vw, 1.8rem);
+		}
+		.subtitle {
+			font-size: .8rem;
+			opacity: .7;
+		}
+		.container {
+			width: 100%;
+			max-width: 1100px;
+			margin: 0 auto;
+
+			flex: 1 1 auto;
+			min-height: 0;
+
+			display: grid;
+			gap: .75rem;
+
+			/* this makes the available height distribute nicely */
+			grid-auto-rows: 1fr;
+
+			/* if you still want scroll when many teams */
+			overflow-y: auto;
+		}
+
+		.team-row {
+			height: 100%;
+			align-content: center; /* centers grid contents vertically */
+			display: grid;
+			grid-template-columns: minmax(110px, 25%) 1fr minmax(80px, 12%);
+			gap: .75rem;
+			align-items: center;
+			padding: .5rem .8rem;
+			border-radius: 999px;
+			background: rgba(0,0,0,0.45);
+			backdrop-filter: blur(12px);
+			box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+			position: relative;
+			overflow: hidden;
+		}
+		.team-row::before {
+			content: "";
+			position: absolute;
+			inset: -80%;
+			background: conic-gradient(from var(--a,0deg), rgba(255,255,255,0.06), transparent, transparent);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity .3s ease;
+		}
+		.team-row.changed::before {
+			/*animation: spin 1.4s linear;*/
+			opacity: 1;
+		}
+		.team-name {
+			font-weight: 600;
+			font-size: clamp(1.0rem, 1.3vw, 1.2rem);
+			text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+			text-align: right;
+		}
+		.bar-outer {
+			position: relative;
+			height: 1.4rem;
+			border-radius: 999px;
+			border: 1px solid #333;
+			overflow: hidden;
+			background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(0,0,0,0.7));
+		}
+		.bar-inner {
+			position: absolute;
+			inset: 0;
+			width: 0%;
+			border-radius: inherit;
+			background-image: linear-gradient(
+				90deg,
+				rgb(255,0,255),
+				rgb(191,64,255),
+				rgb(128,128,255),
+				rgb(64,191,255),
+				rgb(0,255,255)
+			);
+			box-shadow: 0 0 22px rgba(255,0,255,0.7);
+			transition: width .8s cubic-bezier(.23,1,.32,1);
+		}
+		.bar-inner.changed {
+			animation: pulse 0.5s ease-in-out infinite;
+			
+		}
+		.score {
+			text-align: right;
+			font-weight: 800;
+			font-size: clamp(1.5rem, 2.2vw, 2.2rem); /* BIGGER number */
+			text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+			white-space: nowrap;
+		}
+		.score span {
+			opacity: .7;
+			font-weight: 500;
+			margin-left: .25rem;
+			font-size: .55em; /* smaller unit label */
+			text-transform: uppercase;
+			letter-spacing: .08em;
+		}
+		.footer {
+			text-align: center;
+			font-size: .75rem;
+			opacity: .6;
+		}
+		@keyframes pulse {
+			0% { transform: scaleX(1); box-shadow: 0 0 12px rgba(255,0,255,0.7); filter: brightness(1.0);}
+			50% { transform: scaleX(1.2); box-shadow: 0 0 35px rgba(0,255,255,1); filter: brightness(2.0);}
+			100% { transform: scaleX(1); box-shadow: 0 0 12px rgba(255,0,255,0.7); filter: brightness(1.0);}
+		}
+		@keyframes spin {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+		@media (max-width: 600px) {
+			body {
+				padding: .7rem;
+			}
+			.team-row {
+				grid-template-columns: minmax(60px, 25%) 1fr minmax(70px, 18%);
+			}
+		}
+	</style>
 </head>
 <body>
 <header>
-    <!--<div class="subtitle">Live Team Drink Scoreboard</div>
-    <h1>ShotCounter</h1>-->
-    <div class="subtitle" id="last-update"></div>
+	<!--<div class="subtitle">Live Team Drink Scoreboard</div>
+	<h1>ShotCounter</h1>-->
+	<div class="subtitle" id="last-update"></div>
 </header>
 
 <div class="container" id="team-container">
-    <!-- rows injected here -->
+	<!-- rows injected here -->
 </div>
 
 <div class="footer">
@@ -160,87 +182,87 @@
 </div>
 
 <script>
-    const container = document.getElementById("team-container");
-    const lastUpdateLabel = document.getElementById("last-update");
+	const container = document.getElementById("team-container");
+	const lastUpdateLabel = document.getElementById("last-update");
 
-    let lastScores = {}; // teamId -> score
+	let lastScores = {}; // teamId -> score
 
-    async function fetchTeams() {
-        try {
-            const res = await fetch("/api/teams", {cache: "no-store"});
-            const teams = await res.json();
-            renderTeams(teams);
-            updateTimestamp();
-        } catch (e) {
-            console.error(e);
-        }
-    }
+	async function fetchTeams() {
+		try {
+			const res = await fetch("/api/teams", {cache: "no-store"});
+			const teams = await res.json();
+			renderTeams(teams);
+			updateTimestamp();
+		} catch (e) {
+			console.error(e);
+		}
+	}
 
-    function renderTeams(teams) {
-        const existingRows = {};
-        for (const row of container.children) {
-            const id = row.getAttribute("data-id");
-            if (id) existingRows[id] = row;
-        }
+	function renderTeams(teams) {
+		const existingRows = {};
+		for (const row of container.children) {
+			const id = row.getAttribute("data-id");
+			if (id) existingRows[id] = row;
+		}
 
-        container.innerHTML = "";
+		container.innerHTML = "";
 
-        let maxScore = 0;
-        for (const t of teams) {
-            if (t.score > maxScore) maxScore = t.score;
-        }
-        if (maxScore === 0) maxScore = 1;
+		let maxScore = 0;
+		for (const t of teams) {
+			if (t.score > maxScore) maxScore = t.score;
+		}
+		if (maxScore === 0) maxScore = 1;
 
-        for (const t of teams) {
-            const prevScore = lastScores[t.id];
-            const hasChanged = prevScore !== undefined && prevScore !== t.score;
+		for (const t of teams) {
+			const prevScore = lastScores[t.id];
+			const hasChanged = prevScore !== undefined && prevScore !== t.score;
 
-            const row = existingRows[t.id] || document.createElement("div");
-            row.className = "team-row";
-            row.setAttribute("data-id", t.id);
+			const row = existingRows[t.id] || document.createElement("div");
+			row.className = "team-row";
+			row.setAttribute("data-id", t.id);
 
-            if (hasChanged) {
-                row.classList.add("changed");
-                setTimeout(() => row.classList.remove("changed"), 800);
-            }
+			if (hasChanged) {
+				row.classList.add("changed");
+				setTimeout(() => row.classList.remove("changed"), 3000);
+			}
 
-            row.innerHTML = `
-                <div class="team-name"></div>
-                <div class="bar-outer"><div class="bar-inner"></div></div>
-                <div class="score"></div>
-            `;
+			row.innerHTML = `
+				<div class="team-name"></div>
+				<div class="bar-outer"><div class="bar-inner"></div></div>
+				<div class="score"></div>
+			`;
 
-            const nameEl = row.querySelector(".team-name");
-            const barInner = row.querySelector(".bar-inner");
-            const scoreEl = row.querySelector(".score");
+			const nameEl = row.querySelector(".team-name");
+			const barInner = row.querySelector(".bar-inner");
+			const scoreEl = row.querySelector(".score");
 
-            nameEl.textContent = t.name;
-            const width = (t.score / maxScore) * 100;
-            barInner.style.width = width.toFixed(1) + "%";
+			nameEl.textContent = t.name;
+			const width = (t.score / maxScore) * 100;
+			barInner.style.width = width.toFixed(1) + "%";
 
-            if (hasChanged) {
-                barInner.classList.add("changed");
-                setTimeout(() => barInner.classList.remove("changed"), 700);
-            }
+			if (hasChanged) {
+				barInner.classList.add("changed");
+				setTimeout(() => barInner.classList.remove("changed"), 3000);
+			}
 
-            scoreEl.innerHTML = `${t.score}<span>shots</span>`;
+			scoreEl.innerHTML = `${t.score}<span>shots</span>`;
 
-            container.appendChild(row);
+			container.appendChild(row);
 
-            lastScores[t.id] = t.score;
-        }
-    }
+			lastScores[t.id] = t.score;
+		}
+	}
 
-    function updateTimestamp() {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, "0");
-        const mm = String(now.getMinutes()).padStart(2, "0");
-        const ss = String(now.getSeconds()).padStart(2, "0");
-        lastUpdateLabel.textContent = `Update: ${hh}:${mm}:${ss}`;
-    }
+	function updateTimestamp() {
+		const now = new Date();
+		const hh = String(now.getHours()).padStart(2, "0");
+		const mm = String(now.getMinutes()).padStart(2, "0");
+		const ss = String(now.getSeconds()).padStart(2, "0");
+		lastUpdateLabel.textContent = `Update: ${hh}:${mm}:${ss}`;
+	}
 
-    fetchTeams();
-    setInterval(fetchTeams, 3000);
+	fetchTeams();
+	setInterval(fetchTeams, 3000);
 </script>
 </body>
 </html>
