@@ -37,6 +37,7 @@
 			padding: 1.5rem;
 			max-width: 900px;
 			margin: 0 auto 4rem auto;
+			overflow-x: hidden;
 		}
 		table {
 			width: 100%;
@@ -44,6 +45,7 @@
 			background: rgba(0,0,0,0.4);
 			border-radius: .75rem;
 			overflow: hidden;
+			table-layout: fixed;
 		}
 		thead {
 			background: rgba(255,255,255,0.05);
@@ -52,10 +54,12 @@
 			padding: .6rem .75rem;
 			text-align: left;
 			font-size: .9rem;
+			overflow-wrap: anywhere; /* prevent long content from forcing width */
 		}
 		tr:nth-child(even) {
 			background: rgba(255,255,255,0.03);
 		}
+		
 		th {
 			font-weight: 600;
 			text-transform: uppercase;
@@ -63,6 +67,11 @@
 			letter-spacing: .06em;
 			opacity: .8;
 		}
+		
+		th:nth-child(1), td:nth-child(1) { width: 32%; } /* Team */
+		th:nth-child(2), td:nth-child(2) { width: 10%; } /* Score */
+		th:nth-child(4), td:nth-child(4) { width: 8%; } /* Delete */
+		
 		.score {
 			font-weight: 600;
 			font-size: 1rem;
@@ -71,7 +80,15 @@
 			display: flex;
 			flex-wrap: wrap;
 			gap: .25rem;
+			justify-content: flex-start;
 		}
+		
+		.btn-group button {
+			min-width: 44px;
+			/* keep your min-height from before */
+			min-height: 44px;
+		}
+		
 		button {
 			border: none;
 			border-radius: .5rem;
@@ -132,12 +149,13 @@
 		.status.ok {
 			color: #06d6a0;
 		}
+		
 		@media (max-width: 600px) {
 			th:nth-child(4), td:nth-child(4) { display: none; }
-
+			
 			.btn-group {
 				display: grid;
-				grid-template-columns: repeat(4, minmax(44px, 1fr));
+				grid-template-columns: repeat(2, minmax(44px, 1fr));
 				gap: .4rem;
 			}
 
@@ -147,19 +165,28 @@
 				border-radius: .65rem;
 			}
 		}
+		
 		@media (hover: none) and (pointer: coarse) {
 			.btn-group {
-				gap: .5rem;
+				gap: .4rem;
 			}
 
 			.btn-group button {
-				padding: .7rem .9rem;
+				padding: .6rem .6rem;
 				min-width: 44px;
 				min-height: 44px; /* Apple & Google recommended tap size */
 				font-size: .95rem;
 				border-radius: .7rem;
 			}
+			
+			
+			button:active {
+				transform: scale(0.96);
+				background: rgba(255,255,255,0.18);
+			}
+			
 		}
+		
 
 	</style>
 </head>
