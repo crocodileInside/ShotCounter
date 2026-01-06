@@ -8,6 +8,7 @@ import os
 import threading
 import uuid
 from flask import Flask, jsonify, request, redirect, render_template
+from flask import send_from_directory
 
 app = Flask(__name__)
 
@@ -142,6 +143,11 @@ def api_hide_team(team_id):
 
 
 # ---------- MAIN ----------
+
+# Serve logo.png from templates directory
+@app.route("/logo.png")
+def serve_logo():
+    return send_from_directory("templates", "logo.png")
 
 if __name__ == "__main__":
     # Create empty DB if not present

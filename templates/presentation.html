@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>ShotCounter – Scoreboard</title>
+	<title>ShotCounter - Scoreboard</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		:root {
@@ -31,6 +31,16 @@
 			flex-direction: column;
 			overflow-x: hidden;
 			gap: 1rem;
+		}
+		.logo-overlay {
+			position: fixed;
+			left: 20px;
+			bottom: 20px;
+			z-index: 1000;
+			width: 200px;
+			height: auto;
+			pointer-events: none;
+			animation: breathe 2s ease-in-out infinite;
 		}
 		header {
 			text-align: center;
@@ -152,6 +162,11 @@
 			50% { transform: scaleX(1.2); box-shadow: 0 0 35px rgba(0,255,255,1); filter: brightness(2.0);}
 			100% { transform: scaleX(1); box-shadow: 0 0 12px rgba(255,0,255,0.7); filter: brightness(1.0);}
 		}
+		@keyframes breathe {
+			0% { transform: scale(0.7); }
+			50% { transform: scale(1); }
+			100% { transform: scale(0.7); }
+		}
 		@keyframes spin {
 			from { transform: rotate(0deg); }
 			to { transform: rotate(360deg); }
@@ -265,4 +280,8 @@
 	setInterval(fetchTeams, 3000);
 </script>
 </body>
+</body>
+<div class="logo-overlay">
+	<img src="logo.png" alt="Logo" style="width:100%;height:auto;display:block;" />
+</div>
 </html>
